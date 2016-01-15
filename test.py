@@ -14,7 +14,7 @@ def by_three(n):
 			print "%f is not divisble by three" % n
 			n = int(raw_input("Try again:  "))
 		i += 1
-	return "Cube of %d is %d" % (n,cube(n))
+	return "Cube of %f is %d" % (n,cube(n))
 
 print by_three(n)
 
