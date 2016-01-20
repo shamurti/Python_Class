@@ -17,4 +17,3 @@ def by_three(n):
 	return "Cube of %d is %d" % (n,cube(n))
 
 print by_three(n)
-
