@@ -1,22 +1,13 @@
----
-
-- 0
-- 1
-- 2
-- 3
-- 4
-- 5
-- 6
-- 7
-- 8
-- 9
-- 10
-- 11
-- 12
-- 13
-- 14
-- This is Radio Clash
-- To be
+- - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
 - attribs:
   - 0
   - 1
@@ -24,3 +15,6 @@
   - 3
   ip_addr: 10.1.1.1
   router: rtr-1
+- This is Radio Clash
+- Spaceman
+- '54'

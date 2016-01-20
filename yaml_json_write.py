@@ -2,16 +2,22 @@ import yaml
 import json
 import os.path
 
-# Define list
-yj_list = range(15)
-yj_list.append('This is Radio Clash')
-yj_list.append('To be')
+
 # Add dictionary to the list
-yj_list.append({})
-yj_list[-1]
-yj_list[-1]['ip_addr'] = '10.1.1.1'
-yj_list[-1]['router'] = 'rtr-1'
-yj_list[-1]['attribs'] = range(4)
+yj_dict = {
+    'ip_addr' : '10.1.1.1',
+    'router' : 'rtr-1',
+    'attribs' : range(4)
+}
+
+yj_list = [
+    range(10),
+    yj_dict,
+    'This is Radio Clash',
+    'Spaceman',
+    '54'
+]
+
 
 #Print the number of elements in the list
 print "Number of elements in the list are: %s" % (len(yj_list))
