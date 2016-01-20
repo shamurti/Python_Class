@@ -11,10 +11,10 @@ def by_three(n):
 		if too_many_tries:
 			return "Too Many Tries. You only get three."
 		else:
-			print "%f is not divisble by three" % n
+			print "%d is not divisble by three" % n
 			n = int(raw_input("Try again:  "))
 		i += 1
-	return "Cube of %f is %d" % (n,cube(n))
+	return "Cube of %d is %d" % (n,cube(n))
 
 print by_three(n)
 print 'This is Radio Clash'
