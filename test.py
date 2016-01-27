@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 n = int(raw_input("Enter a number divisible by three, and I will give you its cube:  "))
 
@@ -5,9 +6,9 @@ def cube(n):
 	return n**3
 
 def by_three(n):
-	i = 0
+	i = 1
 	while (n%3 !=0):
-		too_many_tries = (i>2)
+		too_many_tries = (i>3)
 		if too_many_tries:
 			return "Too Many Tries. You only get three."
 		else:
