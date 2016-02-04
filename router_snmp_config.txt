@@ -1,0 +1,15 @@
+Below is the SNMPv3 configuration that I used on the two Cisco routers in the lab environment.
+
+>>>>
+
+# Create a view of what can be seen in the SNMP tree (this view actually
+# specifies the entire tree is visible).
+snmp-server view VIEWSTD iso included
+# Create an SNMP Group using SNMPv3 with authentication and encryption, 
+# read-only, using VIEWSTD, filtered by ACL98.  Group name is 'READONLY'.  
+# 'priv' indicates authentication and encryption is used.
+snmp-server group READONLY v3 priv read VIEWSTD access 98
+
+# Bind a user to the SNMP group, specify SHA1 for auth and AES128 for encryption.
+# Specify the authentication and encryption keys
+snmp-server user <user> READONLY v3 auth sha <password> priv aes 128 <key>
