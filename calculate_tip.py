@@ -11,7 +11,8 @@ def calc_tip():
     total = math.ceil(float(bt+tip))
     return total
 
-print "Total rounded up including tip is: %.2f" % (calc_tip())
+print "Total rounded up including tip is: {0}".format(calc_tip())
+
 
 
 
