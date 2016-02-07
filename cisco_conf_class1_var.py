@@ -19,7 +19,18 @@ for i in crypto_map:
 print "*******"
 print "\ncrypto maps with PFS group2 are:"
 for entry in pfs_grp2:
-        print " {0}".format(entry.text)
-print
+		print entry.text
+		for child in entry.children:
+			print " {0}".format(child.text)
+
+print "*******"
+print "\ncrypto maps not using AES:"
+for i in not_aes:
+    print i.text
+    for child in i.children:
+        print " {0}".format(child.text)
+
+
+
 
 
