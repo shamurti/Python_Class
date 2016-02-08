@@ -34,9 +34,9 @@ def telnet_connect(ip_addr):
                 sys.exit("Connection timed-out")
 
 def main():
-        ip_addr = 'ip address'
-        username = 'name'
-        password = 'password'
+        ip_addr = '50.76.53.27'
+        username = 'pyclass'
+        password = '88newclass'
 
         remote_conn = telnet_connect(ip_addr)
         output = login(remote_conn, username, password)
