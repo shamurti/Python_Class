@@ -12,15 +12,25 @@ def netw_device(ip, username, password):
 # Now creating the same but using Classes
 
 ''' 
-creating the class object. "object" below refers to base object. If inherting from another, then the class name would go in the paranthesis
+Creating the class object. "object" below refers to base object. If inherting from another, then the class name would go in the paranthesis
 '''
 
 class NetworkDevice(object):
-	#The "def below defines a 'method' within the class
+	# The "def" below defines a 'method' within the class
+	# "__init__" is the method automatically invoked when the object is created
 	def __init__(self, ip, username, password):
-		self.ip = ip
+	    self.ip = ip
 		self.username = username
 		self.password = password
+	# write code to telnet as a part of the class
+	# def connect_telnet(self):
+	#	code to telnet using above information
+	# write code to go to enable mode
+	# def connect_enable(self):
+	#   code here for enable mode
+	# write code to execute a command
+	# def show_version(self):
+	# code to execute show version 
 
 rtr1 = NetworkDevice('10.1.1.1', 'admin', 'boo')
 rtr2 = NetworkDevice('10.1.1.2', 'admin', 'boo')
