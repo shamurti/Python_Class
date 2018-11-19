@@ -1,0 +1,25 @@
+---
+
+#ansible playbooks consist of plays (actions or tasks) on a set of hosts within the playbook
+
+
+# play1
+- hosts: localhost  #or, a set of hosts
+
+	vars:
+		hostname: rtr-1
+	tasks:
+		#action1:
+		- name: generate config file
+		  template: src=source location of some file
+		                dst=destination location of the file
+		#action2:
+		- name: generate something
+		  template: src=some file
+		            dst=file name and location
+
+- hosts:    host name
+  tasks:
+    - name: do something
+      define action here
+      

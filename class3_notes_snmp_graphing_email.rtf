@@ -1,0 +1,364 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 ArialMT;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue105;\red15\green71\blue159;\red250\green0\blue7;
+\red0\green0\blue109;\red0\green0\blue255;\red56\green110\blue255;}
+\margl1440\margr1440\vieww17640\viewh19440\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf2 \expnd0\expndtw0\kerning0
+\ul \ulc2 SNMPv3\'a0Reference Material
+\f1\b0\fs24 \cf0 \ulnone \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 Below is the SNMPv3 configuration that I used on the two Cisco routers in the lab environment.
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 >>>>
+\f1\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 # Create a view of what can be seen in the SNMP tree (this view actually\cf0 \uc0\u8232 \cf3 # specifies the entire tree is visible).\cf0 \uc0\u8232 \cf3 snmp-server view VIEWSTD iso included
+\fs24 \cf0 \
+
+\fs28 \cf3 # Create an SNMP Group using SNMPv3 with authentication and encryption,\'a0\cf0 \uc0\u8232 \cf3 # read-only, using VIEWSTD,\'a0filtered by ACL98. \'a0Group name is 'READONLY'. \'a0\cf0 \uc0\u8232 \cf3 # 'priv' indicates authentication and encryption is used.\cf0 \uc0\u8232 \cf3 snmp-server group READONLY v3 priv read VIEWSTD access 98\cf0 \uc0\u8232 \u8232 \cf3 # Bind a user to the SNMP group, specify SHA1 for auth\'a0and AES128 for encryption.\cf0 \uc0\u8232 \cf3 # Specify the authentication and encryption keys\cf0 \uc0\u8232 \cf3 snmp-server user <user> READONLY v3 auth sha <password> priv aes 128 <key>
+\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 >>>>
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 In the lab environment, I am using the following credentials:
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf4 username: \'a0 \'a0 \'a0 pysnmp
+\f1\fs24 \cf0 \uc0\u8232 
+\f0\fs32 \cf4 auth_key: \'a0 \'a0 \'a0 \'a0galileo1 \'a0 \'a0 \'a0 \'a0 \'a0
+\f1\fs24 \cf0 \uc0\u8232 
+\f0\fs32 \cf4 encrypt_key: \'a0 galileo1
+\f1\fs24 \cf0 \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf2 \ul Graphing SNMP Data
+\f1\b0\fs24 \cf0 \ulnone \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf5 For graphing, I am using the pygal SVG graphics library:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pygal.org/"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 http://pygal.org/}}\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 You can use this library to create SVG images. \'a0SVG images should generally work with newer browsers (Chrome, Firefox, Safari, IE9+):
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 SVG Browser support:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://caniuse.com/#feat=svg"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 http://caniuse.com/#feat=svg}}\
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs32 \cf2 The below code creates an SVG image using pygal from SNMP interface data.
+\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 >>>> CODE <<<<
+\f1\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 import pygal
+\fs24 \cf0 \
+
+\fs28 \cf3 fa4_in_octets = [5269, 5011, 6705, 5987, 5011, 5071, 6451, 5011, 
+\fs24 \cf0 \
+
+\fs28 \cf3 \'a0\'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a05011, 6181, 5281, 5011]\cf0 \
+\cf3 fa4_out_octets =[5725, 5783, 7670, 6783, 5398, 5783, 9219, 3402, 
+\fs24 \cf0 \
+
+\fs28 \cf3 \'a0\'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a0 \'a05783, 6953, 5668, 5783]\cf0 \
+\
+\cf3 fa4_in_packets = [24, 21, 40, 32, 21, 21, 49, 9, 21, 34, 24, 21]\cf0 \
+\cf3 fa4_out_packets = [24, 21, 40, 32, 21, 21, 49, 9, 21, 34, 24, 21]\cf0 \
+\
+\cf3 # Create a Chart of type Line\cf0 \
+\cf3 line_chart = pygal.Line()\cf0 \
+\
+\cf3 # Title\cf0 \
+\cf3 line_chart.title = 'Input/Output Packets and Bytes'\cf0 \
+\
+\cf3 # X-axis labels (samples were every five minutes)\cf0 \
+\cf3 line_chart.x_labels = ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60']\cf0 \
+\
+\cf3 # Add each one of the above lists into the graph as a line with corresponding label\cf0 \
+\cf3 line_chart.add('InPackets', fa4_in_packets)\cf0 \
+\cf3 line_chart.add('OutPackets', \'a0fa4_out_packets)\cf0 \
+\cf3 line_chart.add('InBytes', fa4_out_octets)\cf0 \
+\cf3 line_chart.add('OutBytes', fa4_in_octets)\cf0 \
+\
+\cf3 # Create an output image file from this\cf0 \
+\cf3 line_chart.render_to_file('test.svg')
+\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 >>>> END CODE <<<<
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 You can view the image that was created at:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://pynet.twb-tech.com/static/img/snmp_interfaces.svg"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 https://pynet.twb-tech.com/static/img/snmp_interfaces.svg}}\
+\
+\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf2 \ul Sending Emails via Python
+\b0 \ulnone \
+\
+The below code defines a function that sends an email. Note, the code assumes that you have an SMTP server listening on localhost. The lab server meets this requirement.
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 If you are developing on your own machine, then you need an email server that you can send through.
+\f1\fs24 \cf0 \
+
+\f0\fs32 \cf2 >>>> CODE <<<<
+\f1\fs24 \cf0 \uc0\u8232 
+\fs28 \cf3 def send_mail(recipient, subject, message, sender):\cf0 \uc0\u8232 \cf3 \'a0 \'a0 '''\cf0 \uc0\u8232 \cf3 \'a0 \'a0 Simple function to help simplify sending SMTP email\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 Assumes a mailserver is available on localhost\cf0 \uc0\u8232 \cf3 \'a0 \'a0 '''\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 import smtplib\cf0 \uc0\u8232 \cf3 \'a0 \'a0 from email.mime.text import MIMEText\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 message = MIMEText(message)\cf0 \uc0\u8232 \cf3 \'a0 \'a0 message['Subject'] = subject\cf0 \uc0\u8232 \cf3 \'a0 \'a0 message['From'] = sender\cf0 \uc0\u8232 \cf3 \'a0 \'a0 message['To'] = recipient\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 # Create SMTP connection object to localhost\cf0 \uc0\u8232 \cf3 \'a0 \'a0 smtp_conn = smtplib.SMTP('localhost')\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 # Send the email\cf0 \uc0\u8232 \cf3 \'a0 \'a0 smtp_conn.sendmail(sender, recipient, message.as_string())\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 # Close SMTP connection
+\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 \'a0 \'a0 smtp_conn.quit()\cf0 \uc0\u8232 \u8232 \cf3 \'a0 \'a0 return True
+\fs24 \cf0 \uc0\u8232 \u8232 
+\f0\fs32 \cf2 >>>> END CODE <<<<\
+\
+\
+You then send an email using the above function as follows:\
+\
+>>>> CODE <<<<
+\f1\fs24 \cf0 \
+
+\fs28 \cf3 import email_helper\cf0 \uc0\u8232 \u8232 \cf3 recipient = '{\field{\*\fldinst{HYPERLINK "mailto:ktbyersx@gmail.com"}}{\fldrslt \cf7 \ul \ulc7 ktbyersx@gmail.com}}'\cf0 \uc0\u8232 \cf3 subject = 'Test message'\cf0 \uc0\u8232 \cf3 message = '''\cf0 \uc0\u8232 \u8232 \cf3 This is a fictional test message.\cf0 \uc0\u8232 \u8232 \u8232 \cf3 Regards,\cf0 \uc0\u8232 \u8232 \cf3 Kirk
+\fs24 \cf0 \
+
+\fs28 \cf3 '''\cf0 \uc0\u8232 \u8232 \cf3 sender = '{\field{\*\fldinst{HYPERLINK "mailto:ktbyers@twb-tech.com"}}{\fldrslt \cf7 \ul \ulc7 ktbyers@twb-tech.com}}'\cf0 \uc0\u8232 \cf3 email_helper.send_mail(recipient, subject, message, sender)
+\fs24 \cf0 \uc0\u8232 \u8232 \cf2 >>>> END CODE <<<<\cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 This email function is installed in the lab environment and is also available on GitHub at:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/ktbyers/pynet/blob/master/email/email_helper.py"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 https://github.com/ktbyers/pynet/blob/master/email/email_helper.py}}\
+\
+\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf2 \ul Python-Gmail\'a0Email Reference Link
+\f1\b0\fs24 \cf0 \ulnone \uc0\u8232 \u8232 
+\f0\fs32 \cf2 Includes example of emailing via external Gmail server with authentication
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://rosettacode.org/wiki/Send_an_email#Python"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 http://rosettacode.org/wiki/Send_an_email#Python}}\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf5 Note, programmatically emailing via Gmail is very problematic due\'a0to Google's security restrictions. I recommend that you find a simpler solution than this.
+\f1\fs24 \cf0 \
+\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf2 \ul Exercises:
+\f1\b0\fs24 \cf0 \ulnone \uc0\u8232 
+\f0\fs32 \cf2 My solutions to these exercises are\'a0posted at:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/ktbyers/pynet/tree/master/pyth_ans_ecourse/class3"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 https://github.com/ktbyers/pynet/tree/master/pyth_ans_ecourse/class3}}\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 1. Using SNMPv3 create a script that detects router configuration\'a0changes.\
+\
+If the running configuration has\'a0changed, then send an email notification to yourself identifying the router that changed and the time that it changed.\
+\
+Note, the running configuration of pynet-rtr2 is changing every 15 minutes (roughly at 0, 15, 30, and 45 minutes after the hour). \'a0This will allow you to test your script in the lab environment.\'a0\
+\
+In this exercise, you will possibly need to save data to an external file. One way you can accomplish this is by\'a0using a pickle file,\'a0see: \'a0\
+\'a0\'a0 \'a0{\field{\*\fldinst{HYPERLINK "http://youtu.be/ZJOJjyhhEvM"}}{\fldrslt \cf6 \ul \ulc6 http://youtu.be/ZJOJjyhhEvM}}\cf3 \'a0\'a0
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf5 A pickle file lets you save native Python data structures (dictionaries, lists, objects) directly to a file.
+\f1\fs24 \cf0 \
+
+\f0\fs32 \cf5 Here is some additional reference material that you will probably need to solve this problem:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 Cisco routers have the following three OIDs:
+\fs24 \cf0 \
+
+\fs28 \cf3 # Uptime when running config last changed\cf0 \
+\cf3 ccmHistoryRunningLastChanged\'a0= '1.3.6.1.4.1.9.9.43.1.1.1.0'\'a0\'a0\'a0\cf0 \
+\
+\cf3 # Uptime when running config last saved (note any 'write' constitutes a save)\'a0\'a0\'a0\'a0\cf0 \
+\cf3 ccmHistoryRunningLastSaved = '1.3.6.1.4.1.9.9.43.1.1.2.0'\'a0\'a0\'a0\cf0 \
+\
+\cf3 # Uptime when startup config last saved\'a0\'a0\'a0\cf0 \
+\cf3 ccmHistoryStartupLastChanged = '1.3.6.1.4.1.9.9.43.1.1.3.0'
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 From the above descriptions, the router will save the sysUptime timestamp (OID sysUptime =\'a01.3.6.1.2.1.1.3.0) when a running configuration change occurs. The router will also record the sysUptime timestamp when the running configuration is saved to the startup config.
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 Here is some data on the behavior of these OIDs. Note, sysUptime times are in hundredths of seconds so 317579 equals 3175.79 seconds (i.e. a bit less than one hour)
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 # After reboot\cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pynet-rtr2.twb-tech.com/"}}{\fldrslt \cf7 \ul \ulc7 pynet-rtr2.twb-tech.com}}\
+\pard\pardeftab720\partightenfactor0
+\cf3 317579 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(sysUptime)\cf0 \
+\cf3 2440 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastChanged--running-config is changed during boot)\cf0 \
+\cf3 0 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastSaved -- i.e. reset to 0 on reload)\cf0 \
+\cf3 0 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryStartupLastChanged -- i.e. reset to 0 on reload)\cf0 \
+\
+\cf3 # After config change on router (but no save to startup config)\cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pynet-rtr2.twb-tech.com/"}}{\fldrslt \cf7 \ul \ulc7 pynet-rtr2.twb-tech.com}}\
+\pard\pardeftab720\partightenfactor0
+\cf3 322522 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(sysUptime)\cf0 \
+\cf3 322219 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastChanged)\cf0 \
+\cf3 0 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastSaved)\cf0 \
+\cf3 0 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryStartupLastChanged)
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 # After 'write mem' on router\cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pynet-rtr2.twb-tech.com/"}}{\fldrslt \cf7 \ul \ulc7 pynet-rtr2.twb-tech.com}}\
+\pard\pardeftab720\partightenfactor0
+\cf3 324543 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(sysUptime)\cf0 \
+\cf3 322219 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastChanged)\cf0 \
+\cf3 323912 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastSaved)\cf0 \
+\cf3 323912 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryStartupLastChanged)
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 # After another configuration change (but no save to startup config)\cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pynet-rtr2.twb-tech.com/"}}{\fldrslt \cf7 \ul \ulc7 pynet-rtr2.twb-tech.com}}\
+\pard\pardeftab720\partightenfactor0
+\cf3 327177\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(sysUptime)\cf0 \
+\cf3 326813\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastChanged)\cf0 \
+\cf3 323912 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastSaved)\cf0 \
+\cf3 323912 \'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryStartupLastChanged)
+\fs24 \cf0 \
+\
+
+\fs28 \cf3 # After 'show run' command (note, this causes 'ccmHistoryRunningLastSaved' to\'a0\cf0 \
+\cf3 # increase i.e. 'write terminal' causes this OID to be updated)\cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "http://pynet-rtr2.twb-tech.com/"}}{\fldrslt \cf7 \ul \ulc7 pynet-rtr2.twb-tech.com}}\
+\pard\pardeftab720\partightenfactor0
+\cf3 343223\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(sysUptime)\cf0 \
+\cf3 326813\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastChanged)\cf0 \
+\cf3 342898\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryRunningLastSaved)\cf0 \
+\cf3 323912\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0(ccmHistoryStartupLastChanged)
+\fs24 \cf0 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\b\fs32 \cf5 \ul \ulc5 Bonus challenge\ulnone :
+\b0 \'a0instead\'a0of saving your data in\'a0a pickle file, save the data using either a YAML or a JSON file.\'a0
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+{\field{\*\fldinst{HYPERLINK "https://github.com/ktbyers/pynet/blob/master/pyth_ans_ecourse/class3/ex1_run_config_chg_alt.py"}}{\fldrslt 
+\f0\fs32 \cf6 \ul \ulc6 My alternate solution}}
+\f0\fs32 \cf5 \'a0supports pickle, YAML, or JSON depending on the name of the file (.pkl, .yml, or .json).
+\f1\fs24 \cf0 \
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 2. Using SNMPv3 create two SVG image files. \'a0
+\f1\fs24 \cf0 \
+\
+
+\f0\fs32 \cf2 The first image file should graph the input and output octets on interface FA4 on pynet-rtr1 every five minutes for an hour. \'a0Use the pygal library to create the SVG graph file. Note, you should be doing a subtraction here (i.e. the input/output octets transmitted during this five minute interval).\'a0\'a0\
+\
+The second SVG graph file should be the same as the first except graph the unicast packets received and transmitted.
+\f1\fs24 \cf0 \uc0\u8232 \u8232 
+\f0 \cf2 The relevant OIDs are as follows:
+\f1 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 ('ifDescr_fa4', '1.3.6.1.2.1.2.2.1.2.5')\cf0 \
+\cf3 ('ifInOctets_fa4', '1.3.6.1.2.1.2.2.1.10.5')\cf0 \
+\cf3 ('ifInUcastPkts_fa4', '1.3.6.1.2.1.2.2.1.11.5')\cf0 \
+\cf3 ('ifOutOctets_fa4', '1.3.6.1.2.1.2.2.1.16.5'),\cf0 \
+\cf3 ('ifOutUcastPkts_fa4', '1.3.6.1.2.1.2.2.1.17.5')
+\fs24 \cf0 \
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 Note, you should be able to scp (secure copy) your image file off the lab server. You can then open up the file using a browser. \'a0For example, on MacOs I did the following (from the MacOs terminal):
+\f1\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 scp kbyers@<hostname>:SNMP/class2/test.svg .
+\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 This copied the file from ~kbyers/SNMP/class2/test.svg to the current directory on my MAC. \'a0\
+\
+The format of the command is:
+\f1\fs24 \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 scp <remote-username>@<remote-hostname>:<remote_path>/<remote_file> .
+\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 The period at the end indicates the file should be copied\'a0to the current directory on the local machine.\
+\
+For Windows, you can use {\field{\*\fldinst{HYPERLINK "http://www.it.cornell.edu/services/managed_servers/howto/file_transfer/fileputty.cfm"}}{\fldrslt \cf6 \ul \ulc6 PuTTY scp}}
+\f1\fs24 \cf0 \
+\
+
+\f0\fs32 \cf2 You might need to ensure that pscp.exe (putty scp) is in your Windows PATH.\
+\
+Note, the example on the {\field{\*\fldinst{HYPERLINK "http://cornell.edu/"}}{\fldrslt \cf7 \ul \ulc7 cornell.edu}} site is doing a copy of a local file to a\'a0remote server. You would need to do the opposite i.e.\'a0copy\'a0a remote file to your local computer:
+\f1\fs24 \cf0 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs28 \cf3 pscp <remote-username>@<remote-hostname>:<remote_path>/<remote_file> .
+\fs24 \cf0 \
+}

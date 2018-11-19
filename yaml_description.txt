@@ -1,0 +1,21 @@
+---
+#above indicates a YAML file
+
+#indentation indicates elements within the same list
+
+- element1
+- element2
+- etc
+
+#disctionaries. two ways:
+
+- key1: value1
+- key2: value2
+- etc
+
+#or:
+
+{key1: value1, key2: value2, etc}
+
+#you can also import files similar to Python
+
